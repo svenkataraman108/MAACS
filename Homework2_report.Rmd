@@ -54,9 +54,13 @@ Write your data analysis statement interpreting the regression model here:
 
 ## Part 3
 
-Develop **three** supporting premises derived from the data that support the statement you wrote in Part 2. These can be plots, other summary statistics, or model results.
+Develop **three** supporting premises derived from the data that support the statement you wrote in Part 2. These can be plots, other summary statistics, or model results. 
 
-NOTE: At least one supporting premise should use a plot.
+NOTE: 
+
+* At least one supporting premise should use a plot.
+
+* Do not use the code you write in Part 1 as a supporting premise
 
 ```{r}
 ## Add your code here
