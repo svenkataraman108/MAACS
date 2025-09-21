@@ -4,9 +4,8 @@ output: html_document
 ---
 
 
-## Name
+## Shriya Venkataraman
 
-Shriya Venkataraman
 
 ### Setup
 
@@ -65,7 +64,7 @@ summary(fev1_model)
 
 Write your data analysis statement interpreting the regression model here:
 
-For each 1-year increase in age, FEV1 increases by ~0.17 liters on average. This is a positive value, consistent with the idea that older kids have higher lung capacity. FEV1 values in children are higher in older children relative to younger children. Age is strongly positively associated with FEV1 in this dataset, as seen by the 65% of the variation in FEV1. 
+**For each 1-year increase in age, FEV1 increases by ~0.17 liters on average. This is a positive value, consistent with the idea that older kids have higher lung capacity. FEV1 values in children are higher in older children relative to younger children. Age is strongly positively associated with FEV1 in this dataset, as seen by the 65% of the variation in FEV1.**
 
 ## Part 3
 
@@ -77,7 +76,7 @@ NOTE:
 
 * Do not use the code you write in Part 1 as a supporting premise
 
-We can first say that the mean FEV1 among older children would be substantially higher than the mean FEV1 amongst the younger children.
+**We can first say that the mean FEV1 among older children would be substantially higher than the mean FEV1 amongst the younger children.**
 
 ```{r}
 #a 
@@ -91,7 +90,7 @@ mean(older$fev1, na.rm= TRUE)
 
 ```
 
-We can also plot the FEV1 versus age with the fitted line and it can show the clear upward trend that as age increases, FEV1 values can also increase.
+**We can also plot the FEV1 versus age with the fitted line and it can show the clear upward trend that as age increases, FEV1 values can also increase.**
 
 ```{r}
 #b 
@@ -103,7 +102,7 @@ plot(maacs$age, maacs$fev1,
 abline(lm(fev1 ~ age, data=maacs), col = "blue")
 
 ```
-Lastly, as seen above we can take a look at the linear regression model and see that the slope of the age is 0.171, meaning that for every 1 year increase in age, FEV1 increases by about 0.17 liters on average. 
+**Lastly, as seen above we can take a look at the linear regression model and see that the slope of the age is 0.171, meaning that for every 1 year increase in age, FEV1 increases by about 0.17 liters on average.** 
 
 ```{r}
 #c
@@ -115,11 +114,11 @@ summary(lm(fev1 ~ age, data = maacs))
 
 Write the three supporting premise statements here:
 
-1. The mean FEV1 is higher in older half of the children than the younger half, showing that lung function increases with age.
+1. **The mean FEV1 is higher in older half of the children than the younger half, showing that lung function increases with age.**
 
-2. Older children have larger FEV1 values based on a scatterplot of age versus FEV1 which shows a strong positive linear trend. 
+2. **Older children have larger FEV1 values based on a scatterplot of age versus FEV1 which shows a strong positive linear trend.** 
 
-3. Analysis of linear regression shows that age is a positive predictor of FEV1, with 65% of variation in FEV1 explained by age.
+3. **Analysis of linear regression shows that age is a positive predictor of FEV1, with 65% of variation in FEV1 explained by age.**
 
 
 ## Part 4
