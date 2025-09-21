@@ -6,7 +6,7 @@ output: html_document
 
 ## Name
 
-Please enter your name here.
+Shriya Venkataraman
 
 ### Setup
 
@@ -14,8 +14,9 @@ Read in the data with `read_csv()` and store the data as an R object named `data
 
 
 ```{r}
-## Load the data and any necessary packages here.
-
+library(tidyverse)
+maacs <- read_csv("maacs.csv.gz")
+head(maacs)
 ```
 
 ## Part 1
@@ -30,8 +31,20 @@ NOTE: In order to write this function, you will need to translate the statement 
 
 NOTE: For this part, do not use any plots.
 
+Based on the statement above, in order to check if FEV1 values are higher in older children than younger children, mathematically this means the average mean FEV1 for older children would be higher than that of younger children. Additionally, the correlation between FEV1 value and age would be positive, indicating that as age increases so does the FEV1 value. There are two mathematical definitions that align with the hypothesis and would allow us to validate it as well. 
+
 ```{r}
 ## Write your function here
+
+fev1_and_age <- function(data) {
+  corr <- cor(maacs$age, maacs$fev1, use = "complete.obs")
+  
+  return(corr > 0)
+}
+
+library(tidyverse)
+
+fev1_and_age(maacs)
 
 ```
 
@@ -43,14 +56,16 @@ Fit a linear regression model with FEV1 as the outcome and age as a predictor.
 How much does FEV1 change for a 1-year increase in the child's age? 
 
 ```{r}
-## Add your code here
+
+fev1_model <- lm(fev1 ~ age, data = maacs)
+summary(fev1_model)
 
 ```
 
 
 Write your data analysis statement interpreting the regression model here:
 
-
+For each 1-year increase in age, FEV1 increases by ~0.17 liters on average. This is a positive value, consistent with the idea that older kids have higher lung capacity. FEV1 values in children are higher in older children relative to younger children. Age is strongly positively associated with FEV1 in this dataset, as seen by the 65% of the variation in FEV1. 
 
 ## Part 3
 
@@ -62,19 +77,49 @@ NOTE:
 
 * Do not use the code you write in Part 1 as a supporting premise
 
+We can first say that the mean FEV1 among older children would be substantially higher than the mean FEV1 amongst the younger children.
+
 ```{r}
-## Add your code here
+#a 
+median_age <- median(maacs$age, na.rm= TRUE)
+younger <- maacs %>% filter(age <= median_age)
+older <- maacs %>% filter(age > median_age)
+
+mean(younger$fev1, na.rm= TRUE)
+mean(older$fev1, na.rm= TRUE)
+
+
+```
+
+We can also plot the FEV1 versus age with the fitted line and it can show the clear upward trend that as age increases, FEV1 values can also increase.
+
+```{r}
+#b 
+
+plot(maacs$age, maacs$fev1, 
+     xlab= "Age (years)", ylab = "FEV1 (liters)", 
+     main= "FEV1 vs Age")
+
+abline(lm(fev1 ~ age, data=maacs), col = "blue")
+
+```
+Lastly, as seen above we can take a look at the linear regression model and see that the slope of the age is 0.171, meaning that for every 1 year increase in age, FEV1 increases by about 0.17 liters on average. 
+
+```{r}
+#c
+summary(lm(fev1 ~ age, data = maacs))
+
 
 ```
 
 
 Write the three supporting premise statements here:
 
-1. 
+1. The mean FEV1 is higher in older half of the children than the younger half, showing that lung function increases with age.
 
-2. 
+2. Older children have larger FEV1 values based on a scatterplot of age versus FEV1 which shows a strong positive linear trend. 
 
-3. 
+3. Analysis of linear regression shows that age is a positive predictor of FEV1, with 65% of variation in FEV1 explained by age.
 
 
 ## Part 4
@@ -90,18 +135,70 @@ For statements involving plots, instead of returning `TRUE` or `FALSE`, you func
 
 ```{r}
 ## Function for supporting premise statement 1
+support_premise1 <- function(dataset) {
+  median_age <- median(dataset$age, na.rm = TRUE)
+  
+  means <- dataset %>%
+    mutate(age_group = ifelse(age >= median_age, "Older", "Younger")) %>%
+    group_by(age_group) %>%
+    summarize(mean_fev1 = mean(fev1, na.rm = TRUE), .groups = "drop")
+  
+  mean_younger <- means$mean_fev1[means$age_group == "Younger"]
+  mean_older   <- means$mean_fev1[means$age_group == "Older"]
+  
+  return(mean_older > mean_younger)
+}
+
+support_premise1(maacs)
 
 ```
 
 
 ```{r}
 ## Function for supporting premise statement 2
+support_premise2 <- function(dataset) {
+  library(ggplot2)
+  
+  actual_plot <- ggplot(dataset, aes(x = age, y = fev1)) +
+    geom_point(alpha = 0.6) +
+    geom_smooth(method = "lm", se = TRUE, color = "yellow") +
+    labs(x = "Age (yrs)", y = "FEV1 (ltrs)",
+         title = "Observed Relationship: Age vs FEV1")
+  
+  print(actual_plot)
+  
+  sim_data <- data.frame(
+    age = seq(5, 17, length.out = 100),
+    fev1 = 0.5 + 0.2 * seq(5, 17, length.out = 100) + rnorm(100, 0, 0.2)
+  )
+  
+  hypothesis_plot <- ggplot(sim_data, aes(x = age, y = fev1)) +
+    geom_point(alpha = 0.6, color = "pink") +
+    geom_smooth(method = "lm", se = TRUE, color = "green") +
+    labs(x = "Age (yrs)", y = "FEV1 (ltrs)",
+         title = "Hypothetical Relationship: FEV1 with Age")
+  
+  print(hypothesis_plot)
+}
+
+support_premise2(maacs)
 
 ```
 
 
 ```{r}
 ## Function for supporting premise statement 3
+
+support_premise3 <- function(dataset) {
+  model <- lm(fev1 ~ age, data = dataset)
+  summary <- summary(model)$coefficients
+  
+  coefficient <- summary["age", "Estimate"]
+  pval <- summary["age", "Pr(>|t|)"]
+  
+  return(coefficient > 0 & pval < 0.05)
+}
+support_premise3(maacs)
 
 ```
 
